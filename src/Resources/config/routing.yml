@@ -1,0 +1,3 @@
+contao_graphql:
+    resource: "@ContaoGraphQLBundle/Controller"
+    type: annotation

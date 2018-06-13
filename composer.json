@@ -1,0 +1,34 @@
+{
+    "name": "dieschittigs/contao-graphql-bundle",
+    "description": "Contao GraphQL",
+    "type": "contao-bundle",
+    "keywords":["contao","api","bundle","json", "graphql", "headless"],
+    "require": {
+        "php": "^7.1",
+        "contao/core-bundle": "4.4.*",
+        "symfony/framework-bundle": "^3.3",
+        "webonyx/graphql-php": "^0.12.0"
+    },
+    "license": "MIT License",
+    "authors": [
+        {
+            "name": "Tobias Duehr",
+            "email": "tobias@dieschittigs.de"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "DieSchittigs\\ContaoGraphQLBundle\\" : "src/"
+        },
+        "classmap": [
+            "src/Resources/contao/"
+		],
+		"exclude-from-classmap": [
+            "src/Resources/contao/config/",
+            "src/Resources/contao/dca/"
+		]
+    },
+    "extra": {
+		"contao-manager-plugin": "DieSchittigs\\ContaoGraphQLBundle\\ContaoManager\\Plugin"
+	}
+}
