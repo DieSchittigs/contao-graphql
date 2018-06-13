@@ -19,16 +19,21 @@ class ContaoObjectType extends ObjectType
     protected static function generateConfig($table)
     {
         System::loadLanguageFile($table, 'de'); // TODO: Adjust language!
-        Controller::loadDataContainer($table, true);
+        Controller::loadDataContainer($table);
         $dcaFields = $GLOBALS['TL_DCA'][$table]['fields'];
 
         $extracted = DcaExtractor::getInstance($table);
 
         $fields = [];
+        $args = [];
         foreach ($extracted->getFields() as $name => $typedef) {
             $type = Types::string();
-
-            if (strpos($typedef, 'char(1)') === 0) $type = Types::boolean();
+            if($name === 'id')
+                $type = $args['id'] = Types::id();
+            else if($name === 'pid')
+                $type = $args['pid'] = Types::id();
+            else if (strpos($typedef, 'int') === 0) $type = Types::int();
+            else if (strpos($typedef, 'char(1)') === 0) $type = Types::boolean();
             $fields[$name] = [
                 'type' => $type,
                 'resolve' => function () { return 'Foo'; },
@@ -37,23 +42,17 @@ class ContaoObjectType extends ObjectType
         }
 
         $data = [
-            'type' => [
-                'fields' => $fields
-            ]
+            'name' => ucfirst(substr($table, 3)),
+            'fields' => $fields
         ];
 
-        $args = [];
         foreach ($extracted->getUniqueFields() as $unique) {
-            $args[$unique] = [
-                'name' => $unique,
-                'type' => Types::string()
-            ];
+            $args[$unique] = Types::string();
         }
-
+        
         if (count($args)) {
             $data['args'] = $args;
         }
-
         return $data;
     }
 }

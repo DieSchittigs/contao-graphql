@@ -27,6 +27,9 @@ class Types
         return [
             'contentElement' => ContentElementType::class,
             'article' => 'tl_article',
+            'file' => 'tl_files',
+            'user' => 'tl_user',
+            'module' => 'tl_module',
         ];
     }
 
@@ -47,6 +50,7 @@ class Types
         }
 
         $type = $types[$name];
+
         if (is_subclass_of($type, ObjectType::class)) {
             return self::$instantiatedTypes[$name] = new $type;
         }

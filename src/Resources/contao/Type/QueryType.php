@@ -16,7 +16,6 @@ class QueryType extends ObjectType
         foreach (Types::typeList() as $name => $_) {
             $fields[$name] = Types::$name();
         }
-        
         $config = [
             'name' => 'Query',
             'fields' => array_merge([
@@ -28,6 +27,10 @@ class QueryType extends ObjectType
         ];
 
         parent::__construct($config);
+    }
+
+    public function article($rootValue, $args){
+        return ['title' => 'dsfsf', 'content' => 'fdsfs'];
     }
 
     public function contentElement($rootValue, $args)

@@ -27,23 +27,39 @@ class GraphQLController extends Controller
     {
         $this->container->get('contao.framework')->initialize();
 
+        $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
+
         $payload = (object) [
             'query' => null,
             'variables' => null,
             'operationName' => null
         ];
-
-        if (!($payload->query = $request->get('query'))) {
-            $payload = json_decode($request->getContent());
+        if($request->isMethod('GET')){
+            $payload->query = $request->get('query');
+            $payload->variables = $request->get('variables');
+            $payload->operationName = $request->get('operationName');
+        } else {
+            try{
+                $payload = json_decode($request->getContent());
+            } catch (\Exception $exception){
+                $result['errors'] = [ FormattedError::createFromException($error, $debug) ];
+                return $this->json($result);
+            }
         }
 
         try {
-            $payload = json_decode($request->getContent());
-
-            $schema = new Schema([ 'query' => new QueryType ]);
-            $result = GraphQL::executeQuery($schema, $payload->query, null, null, $payload->variables);
+            $schema = new Schema([
+                'query' => new QueryType
+            ]);
+            $result = GraphQL::executeQuery(
+                $schema,
+                $payload->query,
+                null,
+                null,
+                $payload->variables,
+                $payload->operationName
+            );
         } catch (\Exception $error) {
-            $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
             $result['errors'] = [ FormattedError::createFromException($error, $debug) ];
         }
 
