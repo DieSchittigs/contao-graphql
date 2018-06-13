@@ -1,4 +1,5 @@
 <?php
+
 namespace DieSchittigs\ContaoGraphQLBundle\Type;
 
 use GraphQL\Type\Definition\ObjectType;
@@ -27,6 +28,7 @@ class QueryType extends ObjectType
                 return $this->{$info->fieldName}($val, $args, $context, $info);
             }
         ];
+        
         parent::__construct($config);
     }
 
@@ -39,5 +41,4 @@ class QueryType extends ObjectType
     {
         return 'Your graphql-php endpoint is ready! Use GraphiQL to browse API';
     }
-
 }

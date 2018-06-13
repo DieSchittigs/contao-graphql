@@ -8,6 +8,7 @@ use Contao\ManagerPlugin\Bundle\Parser\ParserInterface;
 use Contao\ManagerPlugin\Routing\RoutingPluginInterface;
 use Symfony\Component\Config\Loader\LoaderResolverInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
+use DieSchittigs\ContaoGraphQLBundle\ContaoGraphQLBundle;
 
 class Plugin implements BundlePluginInterface, RoutingPluginInterface
 {
@@ -17,7 +18,7 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create('DieSchittigs\ContaoGraphQLBundle\ContaoGraphQLBundle')
+            BundleConfig::create(ContaoGraphQLBundle::class)
                 ->setLoadAfter(['Contao\CoreBundle\ContaoCoreBundle'])
         ];
     }
@@ -28,8 +29,8 @@ class Plugin implements BundlePluginInterface, RoutingPluginInterface
     public function getRouteCollection(LoaderResolverInterface $resolver, KernelInterface $kernel)
     {
         return $resolver
-            ->resolve(__DIR__.'/../Resources/config/routing.yml')
-            ->load(__DIR__.'/../Resources/config/routing.yml')
+            ->resolve(__DIR__ . '/../Resources/config/routing.yml')
+            ->load(__DIR__ . '/../Resources/config/routing.yml')
         ;
     }
 }

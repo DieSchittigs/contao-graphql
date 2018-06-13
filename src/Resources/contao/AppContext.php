@@ -1,4 +1,5 @@
 <?php
+
 namespace GraphQL\Examples\Blog;
 
 /**

@@ -6,7 +6,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Contao\Controller;
 
-class ContentElementType extends ObjectType
+class ContentElementType extends ContaoObjectType
 {
     public function __construct()
     {
