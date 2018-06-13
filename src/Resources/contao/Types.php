@@ -8,6 +8,7 @@ use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ListOfType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\Type;
+use DieSchittigs\ContaoGraphQLBundle\Type\ContaoObjectType;
 
 class Types
 {
@@ -25,7 +26,7 @@ class Types
     {
         return [
             'contentElement' => ContentElementType::class,
-            'articles' => 'tl_article',
+            'article' => 'tl_article',
         ];
     }
 
@@ -50,7 +51,7 @@ class Types
             return self::$instantiatedTypes[$name] = new $type;
         }
 
-        return self::$instantiatedTypes[$name] = new GenericObjectType($type);
+        return self::$instantiatedTypes[$name] = new ContaoObjectType($type);
     }
     
     /**

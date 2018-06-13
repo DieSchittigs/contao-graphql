@@ -27,11 +27,21 @@ class GraphQLController extends Controller
     {
         $this->container->get('contao.framework')->initialize();
 
+        $payload = (object) [
+            'query' => null,
+            'variables' => null,
+            'operationName' => null
+        ];
+
+        if (!($payload->query = $request->get('query'))) {
+            $payload = json_decode($request->getContent());
+        }
+
         try {
             $payload = json_decode($request->getContent());
 
             $schema = new Schema([ 'query' => new QueryType ]);
-            $result = GraphQL::executeQuery($schema, $payload->query);
+            $result = GraphQL::executeQuery($schema, $payload->query, null, null, $payload->variables);
         } catch (\Exception $error) {
             $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
             $result['errors'] = [ FormattedError::createFromException($error, $debug) ];

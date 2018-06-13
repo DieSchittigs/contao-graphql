@@ -12,23 +12,21 @@ class QueryType extends ObjectType
 {
     public function __construct()
     {
+        $fields = [];
+        foreach (Types::typeList() as $name => $_) {
+            $fields[$name] = Types::$name();
+        }
+        
         $config = [
             'name' => 'Query',
-            'fields' => [
-                'contentElement' => [
-                    'type' => Types::contentElement(),
-                    'description' => 'Returns Content Element by id',
-                    'args' => [
-                        'id' => new NonNull(Types::id())
-                    ]
-                ],
+            'fields' => array_merge([
                 'hello' => Types::string()
-            ],
+            ], $fields),
             'resolveField' => function($val, $args, $context, ResolveInfo $info) {
                 return $this->{$info->fieldName}($val, $args, $context, $info);
             }
         ];
-        
+
         parent::__construct($config);
     }
 
