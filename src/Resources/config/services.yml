@@ -2,3 +2,6 @@ services:
   DieSchittigs\ContaoGraphQLBundle\Controller\GraphQLController:
     arguments:
       - '@contao.framework'
+      - '@contao.graphql.generator'
+  contao.graphql.generator:
+    class: DieSchittigs\ContaoGraphQLBundle\Type\ObjectTypeGenerator

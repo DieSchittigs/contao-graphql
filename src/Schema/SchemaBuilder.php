@@ -1,31 +1,37 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\ObjectType;
+namespace DieSchittigs\ContaoGraphQLBundle\Schema;
 
+use DieSchittigs\ContaoGraphQLBundle\Type\ObjectTypeGenerator;
+use GraphQL\Type\Schema;
 use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
-use GraphQL\Type\Definition\NonNull;
-use DieSchittigs\ContaoGraphQLBundle\ObjectType\ObjectTypeFactory;
 
-class QueryType extends ObjectType
+class SchemaBuilder
 {
-    public function __construct()
+    public function __construct(ObjectTypeGenerator $generator)
+    {
+        $this->generator = $generator;        
+    }
+
+    public function build(): Schema
     {
         $types = [];
-        foreach (ObjectTypeFactory::supportedTypes() as $type => $_) {
-            $types[] = ObjectTypeFactory::create($type);
+        foreach (ObjectTypeGenerator::supportedTypes() as $type => $_) {
+            $types[] = ObjectTypeGenerator::create($type);
         }
 
-        $config = [
+        $query = new ObjectType([
             'name' => 'Query',
             'fields' => ['type' => Type::string()],
             'resolveField' => function($val, $args, $context, ResolveInfo $info) {
                 return $this->{$info->fieldName}($val, $args, $context, $info);
             }
-        ];
-
-        parent::__construct($config);
+        ]);
+        
+        return new Schema([
+            'query' => $query,
+        ]);
     }
 
     public function article($rootValue, $args)

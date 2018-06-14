@@ -1,6 +1,6 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\ObjectType\Resolvers;
+namespace DieSchittigs\ContaoGraphQLBundle\Type\Resolvers;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;

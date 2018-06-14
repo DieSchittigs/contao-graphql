@@ -13,14 +13,23 @@ use GraphQL\Error\Debug;
 use DieSchittigs\ContaoGraphQLBundle\Types;
 use DieSchittigs\ContaoGraphQLBundle\ObjectType\QueryType;
 use Contao\CoreBundle\Framework\ContaoFramework;
+use DieSchittigs\ContaoGraphQLBundle\Type\ObjectTypeGenerator;
+use DieSchittigs\ContaoGraphQLBundle\Schema\SchemaBuilder;
 
 /**
  * @Route("/graphql", defaults={"_scope" = "frontend", "_token_check" = false})
  */
 class GraphQLController extends AbstractController
 {
-    public function __construct(ContaoFramework $framework)
+    /**
+     * @var ObjectTypeGenerator
+     */
+    protected $generator;
+
+    public function __construct(ContaoFramework $framework, ObjectTypeGenerator $generator)
     {
+        $this->generator = $generator;
+
         $framework->initialize();
     }
 
@@ -45,12 +54,10 @@ class GraphQLController extends AbstractController
         }
 
         try {
-            $schema = new Schema([
-                'query' => new QueryType
-            ]);
+            $schemaBuilder = new SchemaBuilder($this->generator);
 
             $result = GraphQL::executeQuery(
-                $schema,
+                $schemaBuilder->build(),
                 $payload->query,
                 null,
                 null,

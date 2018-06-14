@@ -1,11 +1,10 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\ObjectType;
+namespace DieSchittigs\ContaoGraphQLBundle\Type;
 
-use DieSchittigs\ContaoGraphQLBundle\ObjectType\Resolvers\ContentElement;
+use DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\ContentElement;
 
-
-class ObjectTypeFactory
+class ObjectTypeGenerator
 {
     public static function supportedTypes()
     {
@@ -14,7 +13,7 @@ class ObjectTypeFactory
         ];
     }
 
-    public static function create($type)
+    public static function create($type): DatabaseObjectType
     {
         $types = self::supportedTypes();
         
@@ -23,6 +22,6 @@ class ObjectTypeFactory
         }
 
         // Stub
-        return new $type;
+        return new DatabaseObjectType(new $type);
     }
 }

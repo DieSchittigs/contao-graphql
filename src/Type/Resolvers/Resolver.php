@@ -1,6 +1,6 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\ObjectType\Resolvers;
+namespace DieSchittigs\ContaoGraphQLBundle\Type\Resolvers;
 
 class Resolver
 {
