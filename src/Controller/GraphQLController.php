@@ -3,7 +3,7 @@
 namespace DieSchittigs\ContaoGraphQLBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use GraphQL\Type\Schema;
@@ -12,12 +12,18 @@ use GraphQL\Error\FormattedError;
 use GraphQL\Error\Debug;
 use DieSchittigs\ContaoGraphQLBundle\Types;
 use DieSchittigs\ContaoGraphQLBundle\Type\QueryType;
+use Contao\CoreBundle\Framework\ContaoFramework;
 
 /**
  * @Route("/graphql", defaults={"_scope" = "frontend", "_token_check" = false})
  */
-class GraphQLController extends Controller
+class GraphQLController extends AbstractController
 {
+    public function __construct(ContaoFramework $framework)
+    {
+        $framework->initialize();
+    }
+
     /**
      * @return Response
      *
@@ -25,8 +31,6 @@ class GraphQLController extends Controller
      */
     public function handle(Request $request)
     {
-        $this->container->get('contao.framework')->initialize();
-
         $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
 
         $payload = (object) [

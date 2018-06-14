@@ -1,0 +1,4 @@
+services:
+  DieSchittigs\ContaoGraphQLBundle\Controller\GraphQLController:
+    arguments:
+      - '@contao.framework'

@@ -3,6 +3,7 @@
 namespace DieSchittigs\ContaoGraphQLBundle\Type;
 
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
 use DieSchittigs\ContaoGraphQLBundle\Types;
 use Contao\DcaExtractor;
 use Contao\Controller;
@@ -60,9 +61,9 @@ class ContaoObjectType extends ObjectType
      * 
      * @param string $name      The name of the column
      * @param string $typedef   The SQL column type definition
-     * @return ObjectType 
+     * @return Type 
      */
-    protected static function determineColumnType(string $name, string $typedef): ObjectType
+    protected static function determineColumnType(string $name, string $typedef): Type
     {
         $type = Types::string();
 
