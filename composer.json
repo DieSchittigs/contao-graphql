@@ -23,14 +23,7 @@
     "autoload": {
         "psr-4": {
             "DieSchittigs\\ContaoGraphQLBundle\\" : "src/"
-        },
-        "classmap": [
-            "src/Resources/contao/"
-        ],
-        "exclude-from-classmap": [
-            "src/Resources/contao/config/",
-            "src/Resources/contao/dca/"
-        ]
+        }
     },
     "extra": {
         "contao-manager-plugin": "DieSchittigs\\ContaoGraphQLBundle\\ContaoManager\\Plugin"

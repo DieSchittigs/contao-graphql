@@ -1,26 +1,25 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\Type;
+namespace DieSchittigs\ContaoGraphQLBundle\ObjectType;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\Type;
 use GraphQL\Type\Definition\NonNull;
-use DieSchittigs\ContaoGraphQLBundle\Types;
+use DieSchittigs\ContaoGraphQLBundle\ObjectType\ObjectTypeFactory;
 
 class QueryType extends ObjectType
 {
     public function __construct()
     {
-        $fields = [];
-        foreach (Types::typeList() as $name => $_) {
-            $fields[$name] = Types::$name();
+        $types = [];
+        foreach (ObjectTypeFactory::supportedTypes() as $type => $_) {
+            $types[] = ObjectTypeFactory::create($type);
         }
+
         $config = [
             'name' => 'Query',
-            'fields' => array_merge([
-                'hello' => Types::string()
-            ], $fields),
+            'fields' => ['type' => Type::string()],
             'resolveField' => function($val, $args, $context, ResolveInfo $info) {
                 return $this->{$info->fieldName}($val, $args, $context, $info);
             }
@@ -29,13 +28,14 @@ class QueryType extends ObjectType
         parent::__construct($config);
     }
 
-    public function article($rootValue, $args){
-        return ['title' => 'dsfsf', 'content' => 'fdsfs'];
+    public function article($rootValue, $args)
+    {
+        return ['title' => 'foo', 'content' => 'bar'];
     }
 
     public function contentElement($rootValue, $args)
     {
-        return ['title' => 'dsfsf', 'content' => 'fdsfs'];
+        return ['title' => 'foo', 'content' => 'bar'];
     }
 
     public function hello()

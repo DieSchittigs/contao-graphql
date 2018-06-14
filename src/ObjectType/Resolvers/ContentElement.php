@@ -1,12 +1,12 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\Type;
+namespace DieSchittigs\ContaoGraphQLBundle\ObjectType\Resolvers;
 
 use GraphQL\Type\Definition\ObjectType;
 use GraphQL\Type\Definition\Type;
 use Contao\Controller;
 
-class ContentElementType extends ContaoObjectType
+class ContentElement extends Resolver
 {
     public function __construct()
     {
@@ -21,7 +21,5 @@ class ContentElementType extends ContaoObjectType
         foreach ($fields as $fieldKey => $field) {
             $config['fields'][$fieldKey] = Type::string();
         }
-
-        ObjectType::__construct($config);
     }
 }

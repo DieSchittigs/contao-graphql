@@ -11,7 +11,7 @@ use GraphQL\GraphQL;
 use GraphQL\Error\FormattedError;
 use GraphQL\Error\Debug;
 use DieSchittigs\ContaoGraphQLBundle\Types;
-use DieSchittigs\ContaoGraphQLBundle\Type\QueryType;
+use DieSchittigs\ContaoGraphQLBundle\ObjectType\QueryType;
 use Contao\CoreBundle\Framework\ContaoFramework;
 
 /**

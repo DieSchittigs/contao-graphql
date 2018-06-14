@@ -1,20 +1,13 @@
 <?php
 
-namespace DieSchittigs\ContaoGraphQLBundle\Type;
+namespace DieSchittigs\ContaoGraphQLBundle\ObjectType\Resolvers;
 
-use GraphQL\Type\Definition\ObjectType;
-use GraphQL\Type\Definition\Type;
-use DieSchittigs\ContaoGraphQLBundle\Types;
-use Contao\DcaExtractor;
-use Contao\Controller;
-use Contao\System;
-
-class ContaoObjectType extends ObjectType
+class Resolver
 {
     public function __construct($config)
     {
         $config = self::generateConfig($config);
-        parent::__construct($config);
+        // parent::__construct($config);
     }
 
     /**
@@ -33,6 +26,11 @@ class ContaoObjectType extends ObjectType
 
         $fields = $args = [];
         foreach ($extracted->getFields() as $name => $typedef) {
+            if ($name === 'id')
+                $type = $args['id'] = Types::id();
+            else if ($name === 'pid')
+                $type = $args['pid'] = Types::id();
+                
             $fields[$name] = [
                 'type' => self::determineColumnType($name, $typedef),
                 'resolve' => function () { return 'Foo'; },
