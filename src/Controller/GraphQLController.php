@@ -8,8 +8,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use GraphQL\Type\Schema;
 use GraphQL\GraphQL;
-use \GraphQL\Error\FormattedError;
-use \GraphQL\Error\Debug;
+use GraphQL\Error\FormattedError;
+use GraphQL\Error\Debug;
 use DieSchittigs\ContaoGraphQLBundle\Types;
 use DieSchittigs\ContaoGraphQLBundle\Type\QueryType;
 
@@ -30,27 +30,21 @@ class GraphQLController extends Controller
         $debug = Debug::INCLUDE_DEBUG_MESSAGE | Debug::INCLUDE_TRACE;
 
         $payload = (object) [
-            'query' => null,
-            'variables' => null,
-            'operationName' => null
+            'query' => $request->get('query'),
+            'variables' => $request->get('variables'),
+            'operationName' => $request->get('operationName'),
         ];
-        if($request->isMethod('GET')){
-            $payload->query = $request->get('query');
-            $payload->variables = $request->get('variables');
-            $payload->operationName = $request->get('operationName');
-        } else {
-            try{
-                $payload = json_decode($request->getContent());
-            } catch (\Exception $exception){
-                $result['errors'] = [ FormattedError::createFromException($error, $debug) ];
-                return $this->json($result);
-            }
+
+        if ($request->isMethod('POST') && is_null($payload = json_decode($request->getContent()))) {
+            $result['errors'] = [ FormattedError::create(json_last_error_msg()) ];
+            return $this->json($result);
         }
 
         try {
             $schema = new Schema([
                 'query' => new QueryType
             ]);
+
             $result = GraphQL::executeQuery(
                 $schema,
                 $payload->query,

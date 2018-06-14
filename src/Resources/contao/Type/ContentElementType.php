@@ -10,7 +10,6 @@ class ContentElementType extends ContaoObjectType
 {
     public function __construct()
     {
-        // var_dump(self::generateConfig('tl_content'));die();
         $config = ['fields' => [
             'id' => Type::id(),
             'title' => Type::string()

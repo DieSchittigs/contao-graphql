@@ -16,7 +16,13 @@ class ContaoObjectType extends ObjectType
         parent::__construct($config);
     }
 
-    protected static function generateConfig($table)
+    /**
+     * Generates an object type configuration for the specified table
+     * 
+     * @param string $table The table name of the object to generate a configuration for
+     * @return array
+     */
+    protected static function generateConfig(string $table): array
     {
         System::loadLanguageFile($table, 'de'); // TODO: Adjust language!
         Controller::loadDataContainer($table);
@@ -24,18 +30,10 @@ class ContaoObjectType extends ObjectType
 
         $extracted = DcaExtractor::getInstance($table);
 
-        $fields = [];
-        $args = [];
+        $fields = $args = [];
         foreach ($extracted->getFields() as $name => $typedef) {
-            $type = Types::string();
-            if($name === 'id')
-                $type = $args['id'] = Types::id();
-            else if($name === 'pid')
-                $type = $args['pid'] = Types::id();
-            else if (strpos($typedef, 'int') === 0) $type = Types::int();
-            else if (strpos($typedef, 'char(1)') === 0) $type = Types::boolean();
             $fields[$name] = [
-                'type' => $type,
+                'type' => self::determineColumnType($name, $typedef),
                 'resolve' => function () { return 'Foo'; },
                 'description' => $dcaFields[$name]['label'] ? $dcaFields[$name]['label'][1] : null
             ];
@@ -53,6 +51,28 @@ class ContaoObjectType extends ObjectType
         if (count($args)) {
             $data['args'] = $args;
         }
+
         return $data;
+    }
+
+    /**
+     * Determines a column's object type
+     * 
+     * @param string $name      The name of the column
+     * @param string $typedef   The SQL column type definition
+     * @return ObjectType 
+     */
+    protected static function determineColumnType(string $name, string $typedef): ObjectType
+    {
+        $type = Types::string();
+
+        if ($name === 'id')
+            $type = $args['id'] = Types::id();
+        else if ($name === 'pid')
+            $type = $args['pid'] = Types::id();
+        else if (strpos($typedef, 'int') === 0) $type = Types::int();
+        else if (strpos($typedef, 'char(1)') === 0) $type = Types::boolean();
+
+        return $type;
     }
 }
