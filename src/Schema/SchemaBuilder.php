@@ -17,8 +17,8 @@ class SchemaBuilder
     public function build(): Schema
     {
         $types = [];
-        foreach (ObjectTypeGenerator::supportedTypes() as $type => $_) {
-            $types[] = ObjectTypeGenerator::create($type);
+        foreach ($this->generator->supportedTypes() as $type => $_) {
+            $types[] = $this->generator->create($type);
         }
 
         $query = new ObjectType([

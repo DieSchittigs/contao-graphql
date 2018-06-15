@@ -5,3 +5,9 @@ services:
       - '@contao.graphql.generator'
   contao.graphql.generator:
     class: DieSchittigs\ContaoGraphQLBundle\Type\ObjectTypeGenerator
+    arguments:
+      - '@service_container'
+  contao.graphql.resolver.default:
+    class: DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\Resolver
+  contao.graphql.resolver.tl_content:
+    class: DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\ContentElement
