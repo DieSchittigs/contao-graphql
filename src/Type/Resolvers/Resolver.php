@@ -2,12 +2,53 @@
 
 namespace DieSchittigs\ContaoGraphQLBundle\Type\Resolvers;
 
+use GraphQL\Type\Definition\Type;
+use GraphQL\Type\Definition\ObjectType;
+use Contao\DcaExtractor;
+use Contao\Controller;
+use Contao\System;
+use DieSchittigs\ContaoGraphQLBundle\Type\DatabaseObjectType;
+
 class Resolver
 {
-    public function __construct($config)
+    /**
+     * @var string
+     */
+    protected $table;
+
+    /**
+     * @var string
+     */
+    protected $singularName;
+
+    /**
+     * @var string
+     */
+    protected $pluralName;
+
+    public function __construct(string $table)
     {
-        $config = self::generateConfig($config);
-        // parent::__construct($config);
+        $this->table = $table;
+    }
+
+    public function resolve(): DatabaseObjectType
+    {
+        $config = $this->generateConfig($this->table);
+        $singular = new ObjectType($config);
+
+        return new DatabaseObjectType($singular);
+    }
+
+    public function setSingularName(string $name): Resolver
+    {
+        $this->singularName = $name;
+        return $this;
+    }
+
+    public function setPluralName(string $name): Resolver
+    {
+        $this->pluralName = $name;
+        return $this;
     }
 
     /**
@@ -16,9 +57,9 @@ class Resolver
      * @param string $table The table name of the object to generate a configuration for
      * @return array
      */
-    protected static function generateConfig(string $table): array
+    protected function generateConfig(string $table): array
     {
-        System::loadLanguageFile($table, 'de'); // TODO: Adjust language!
+        System::loadLanguageFile($table, 'de');
         Controller::loadDataContainer($table);
         $dcaFields = $GLOBALS['TL_DCA'][$table]['fields'];
 
@@ -27,9 +68,9 @@ class Resolver
         $fields = $args = [];
         foreach ($extracted->getFields() as $name => $typedef) {
             if ($name === 'id')
-                $type = $args['id'] = Types::id();
+                $type = $args['id'] = Type::id();
             else if ($name === 'pid')
-                $type = $args['pid'] = Types::id();
+                $type = $args['pid'] = Type::id();
                 
             $fields[$name] = [
                 'type' => self::determineColumnType($name, $typedef),
@@ -38,13 +79,15 @@ class Resolver
             ];
         }
 
+        // Currently singularName is required for testing purposes.
+        // Hardcoding will be removed later.
         $data = [
-            'name' => ucfirst(substr($table, 3)),
+            'name' => $this->singularName,
             'fields' => $fields
         ];
 
         foreach ($extracted->getUniqueFields() as $unique) {
-            $args[$unique] = Types::string();
+            $args[$unique] = Type::string();
         }
         
         if (count($args)) {
@@ -63,14 +106,14 @@ class Resolver
      */
     protected static function determineColumnType(string $name, string $typedef): Type
     {
-        $type = Types::string();
+        $type = Type::string();
 
         if ($name === 'id')
-            $type = $args['id'] = Types::id();
+            $type = $args['id'] = Type::id();
         else if ($name === 'pid')
-            $type = $args['pid'] = Types::id();
-        else if (strpos($typedef, 'int') === 0) $type = Types::int();
-        else if (strpos($typedef, 'char(1)') === 0) $type = Types::boolean();
+            $type = $args['pid'] = Type::id();
+        else if (strpos($typedef, 'int') === 0) $type = Type::int();
+        else if (strpos($typedef, 'char(1)') === 0) $type = Type::boolean();
 
         return $type;
     }

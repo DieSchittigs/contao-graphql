@@ -22,14 +22,19 @@ class DatabaseObjectType
         $this->plural = $plural;
     }
 
-    public function singular(): ?ObjectType
+    public function getFields(): array
     {
-        return $this->singular;
-    }
+        $list = [];
 
-    public function plural(): ?ObjectType
-    {
-        return $this->plural;
+        if ($this->singular) {
+            $list[$this->singular->name] = $this->singular;
+        }
+
+        if ($this->plural) {
+            $list[$this->plural->name] = $this->plural;
+        }
+
+        return $list;
     }
 
     public function arguments(): array

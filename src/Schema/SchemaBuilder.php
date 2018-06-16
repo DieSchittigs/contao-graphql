@@ -16,14 +16,15 @@ class SchemaBuilder
 
     public function build(): Schema
     {
-        $types = [];
-        foreach ($this->generator->supportedTypes() as $type => $_) {
-            $types[] = $this->generator->create($type);
+        $fields = [];
+        foreach ($this->generator->supportedTypes() as $type) {
+            $objectType = $this->generator->create($type);
+            $fields = array_merge($fields, $objectType->getFields());
         }
 
         $query = new ObjectType([
             'name' => 'Query',
-            'fields' => ['type' => Type::string()],
+            'fields' => $fields,
             'resolveField' => function($val, $args, $context, ResolveInfo $info) {
                 return $this->{$info->fieldName}($val, $args, $context, $info);
             }
@@ -39,9 +40,9 @@ class SchemaBuilder
         return ['title' => 'foo', 'content' => 'bar'];
     }
 
-    public function contentElement($rootValue, $args)
+    public function Content($rootValue, $args)
     {
-        return ['title' => 'foo', 'content' => 'bar'];
+        return ['id' => 123, 'content' => 'bar'];
     }
 
     public function hello()

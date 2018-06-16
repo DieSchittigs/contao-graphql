@@ -4,6 +4,7 @@ namespace DieSchittigs\ContaoGraphQLBundle\Type;
 
 use DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\ContentElement;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\Resolver;
 
 class ObjectTypeGenerator
 {
@@ -24,30 +25,60 @@ class ObjectTypeGenerator
 
     public function supportedTypes(): array
     {
-        // var_dump($this->container->getParameter('contao_graphql.types'));
+        return $this->container->getParameter('contao_graphql.types');
+    }
+
+    protected function configuration(string $type): array
+    {
+        // This works for now, but is definitely not pretty.
+        // Plus, the singular and plural name are only relevant for the DatabaseObjectType.
+        // Really we don't care at the ObjectTypeGenerator level.
+
+        // Re-evaluate and refactor this to something nicer.
+
+        $singularType = 'contao_graphql.type.' . $type . '.singular';
+        if ($this->container->hasParameter($singularType)) {
+            $singular = $this->container->getParameter($singularType);
+        } else {
+            $singular = ucfirst(str_replace('tl_', '', $type));
+        }
+
+        $pluralType = 'contao_graphql.type.' . $type . '.plural';
+        if ($this->container->hasParameter($pluralType)) {
+            $plural = $this->container->getParameter($pluralType);
+        } else {
+            $plural = null;
+        }
+
+        $resolverType = 'contao_graphql.type.' . $type . '.resolver';
+        if ($this->container->hasParameter($resolverType)) {
+            $resolver = $this->container->getParameter($resolverType);
+        } else {
+            $resolver = Resolver::class;
+        }
+
         return [
-            'tl_content' => ['contentElement', 'contentElements'],
+            'singular' => $singular,
+            'plural' => $plural,
+            'resolver' => $resolver
         ];
     }
 
     public function create(string $type): DatabaseObjectType
     {
-        $types = self::supportedTypes();
-        
-        if (!in_array($type, array_keys($types))) {
+        if (isset($this->resolved[$type])) {
+            return $this->resolved[$type];
+        }
+
+        if (!in_array($type, $this->supportedTypes())) {
             throw new \BadMethodCallException();
         }
 
-        $servicePrefix = 'contao.graphql.resolver.';
-        try {
-            $resolver = $this->container->get($servicePrefix . $type);
-        } catch (\Exception $e) {
-            $resolver = $this->container->get($resolver . 'default');
-        }
+        $configuration = $this->configuration($type);
 
-        // var_dump($resolver);
+        $resolver = new $configuration['resolver']($type);
+        $resolver->setSingularName($configuration['singular']);
 
-        // Stub
-        return new DatabaseObjectType(new $type);
+        return $this->resolved[$type] = $resolver->resolve();
     }
 }
