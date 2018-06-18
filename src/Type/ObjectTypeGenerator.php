@@ -18,16 +18,30 @@ class ObjectTypeGenerator
      */
     protected $resolved = [];
 
+    /**
+     * @param ContainerInterface $container
+     */
     public function __construct(ContainerInterface $container)
     {
         $this->container = $container;
     }
 
+    /**
+     * Returns a list of all supported types
+     * 
+     * @return array
+     */
     public function supportedTypes(): array
     {
         return $this->container->getParameter('contao_graphql.types');
     }
 
+    /**
+     * Returns configuration options for a given type
+     * 
+     * @param string $type The type to generate the configuration for
+     * @return array
+     */
     protected function configuration(string $type): array
     {
         // This works for now, but is definitely not pretty.
@@ -64,6 +78,12 @@ class ObjectTypeGenerator
         ];
     }
 
+    /**
+     * Generates or reuses an existing DatabaseObjectType for the given type name
+     * 
+     * @param string $type Type name of the object type
+     * @return DatabaseObjectType
+     */
     public function create(string $type): DatabaseObjectType
     {
         if (isset($this->resolved[$type])) {

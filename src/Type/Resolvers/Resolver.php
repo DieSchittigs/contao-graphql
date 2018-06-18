@@ -31,6 +31,11 @@ class Resolver
         $this->table = $table;
     }
 
+    /**
+     * Resolve the table and return the corresponding DatabaseObjectType
+     * 
+     * @return DatabaseObjectType
+     */
     public function resolve(): DatabaseObjectType
     {
         $config = $this->generateConfig($this->table);

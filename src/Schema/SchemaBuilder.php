@@ -14,6 +14,11 @@ class SchemaBuilder
         $this->generator = $generator;        
     }
 
+    /**
+     * Generates and builds the query schema
+     * 
+     * @return Schema
+     */
     public function build(): Schema
     {
         $fields = [];

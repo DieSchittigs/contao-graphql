@@ -16,12 +16,24 @@ class DatabaseObjectType
      */
     protected $plural;
 
+    /**
+     * Creates a DatabaseObjectType. The singular and plural variants of the type are
+     * optional as to allow omitting types that don't make sense
+     * 
+     * @param ObjectType $singular
+     * @param ObjectType $plural
+     */
     public function __construct(ObjectType $singular = null, ObjectType $plural = null)
     {
         $this->singular = $singular;
         $this->plural = $plural;
     }
 
+    /**
+     * Returns a field list ready for consumption in a query type
+     * 
+     * @return array
+     */
     public function getFields(): array
     {
         $list = [];
@@ -37,6 +49,11 @@ class DatabaseObjectType
         return $list;
     }
 
+    /**
+     * Returns a list of arguments
+     * 
+     * @return array
+     */
     public function arguments(): array
     {
         return [];

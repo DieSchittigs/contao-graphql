@@ -26,6 +26,10 @@ class GraphQLController extends AbstractController
      */
     protected $generator;
 
+    /**
+     * @param ContaoFramework $framework
+     * @param ObjectTypeGenerator $generator
+     */
     public function __construct(ContaoFramework $framework, ObjectTypeGenerator $generator)
     {
         $this->generator = $generator;
