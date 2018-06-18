@@ -21,18 +21,19 @@ class SchemaBuilder
      */
     public function build(): Schema
     {
+        $resolver = new FieldResolver;
+
         $fields = [];
         foreach ($this->generator->supportedTypes() as $type) {
             $objectType = $this->generator->create($type);
+            $resolver->addField($objectType);
             $fields = array_merge($fields, $objectType->getFields());
         }
 
         $query = new ObjectType([
             'name' => 'Query',
             'fields' => $fields,
-            'resolveField' => function($val, $args, $context, ResolveInfo $info) {
-                return $this->{$info->fieldName}($val, $args, $context, $info);
-            }
+            'resolveField' => [$resolver, 'resolveField'],
         ]);
         
         return new Schema([

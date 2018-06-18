@@ -79,7 +79,7 @@ class Resolver
                 
             $fields[$name] = [
                 'type' => self::determineColumnType($name, $typedef),
-                'resolve' => function () { return 'Foo'; },
+                // 'resolve' => [$this, 'resolve'],
                 'description' => $dcaFields[$name]['label'] ? $dcaFields[$name]['label'][1] : null
             ];
         }

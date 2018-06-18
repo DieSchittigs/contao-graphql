@@ -3,6 +3,7 @@
 namespace DieSchittigs\ContaoGraphQLBundle\Type;
 
 use GraphQL\Type\Definition\ObjectType;
+use GraphQL\Type\Definition\Type;
 
 class DatabaseObjectType
 {
@@ -17,16 +18,12 @@ class DatabaseObjectType
     protected $plural;
 
     /**
-     * Creates a DatabaseObjectType. The singular and plural variants of the type are
-     * optional as to allow omitting types that don't make sense
-     * 
      * @param ObjectType $singular
      * @param ObjectType $plural
      */
-    public function __construct(ObjectType $singular = null, ObjectType $plural = null)
+    public function __construct(ObjectType $type = null)
     {
-        $this->singular = $singular;
-        $this->plural = $plural;
+        $this->type = $type;
     }
 
     /**
@@ -38,23 +35,38 @@ class DatabaseObjectType
     {
         $list = [];
 
-        if ($this->singular) {
-            $list[$this->singular->name] = $this->singular;
-        }
+        $list[$this->type->name] = [
+            'type' => $this->type,
+            'args' => $this->singularArguments(),
+            'resolve' => function () {
+                return ['id' => 30];
+            }
+        ];
 
-        if ($this->plural) {
-            $list[$this->plural->name] = $this->plural;
-        }
+        $list[$this->type->name . 's'] = [
+            'type' => Type::listOf($this->type),
+            'args' => $this->pluralArguments()
+        ];
 
         return $list;
     }
 
     /**
-     * Returns a list of arguments
+     * Returns a list of arguments for the singular form of the type
      * 
      * @return array
      */
-    public function arguments(): array
+    public function singularArguments(): array
+    {
+        return [];
+    }
+
+    /**
+     * Returns a list of arguments for the plural form of the type
+     * 
+     * @return array
+     */
+    public function pluralArguments(): array
     {
         return [];
     }
