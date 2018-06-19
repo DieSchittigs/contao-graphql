@@ -16,10 +16,7 @@ class GraphQLExtension extends Extension
      */
     public function load(array $configs, ContainerBuilder $container)
     {
-        array_unshift($configs, Yaml::parse(file_get_contents(__DIR__ . '/../Resources/config/graphql.yml')));
-        $configuration = new Configuration;
-        $config = $this->processConfiguration($configuration, $configs);
-
+        $config = $this->createConfiguration($configs);
         $container->setParameter('contao.graphql.types', array_keys($config));
         $container->setParameter('contao.graphql.config', $config);
 
@@ -27,8 +24,30 @@ class GraphQLExtension extends Extension
         $loader->load('services.yml');
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getAlias()
     {
         return 'graphql';
+    }
+
+    /**
+     * Creates a configuration array for GraphQL types and fields
+     *
+     * @param array $configs A list of configuration options
+     * @return array
+     */
+    protected function createConfiguration(array $configs)
+    {
+        array_unshift($configs, Yaml::parse(file_get_contents(__DIR__ . '/../Resources/config/graphql.yml')));
+        $configuration = new Configuration;
+        $config = $this->processConfiguration($configuration, $configs);
+
+        foreach ($config as &$field) {
+            $field['type'] = $field['type'] ?? $field['singular'];
+        }
+
+        return $config;
     }
 }

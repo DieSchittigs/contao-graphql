@@ -10,20 +10,21 @@ class DatabaseObjectType
     /**
      * @var ObjectType
      */
-    protected $singular;
+    protected $type;
 
     /**
-     * @var ObjectType
+     * @var array
      */
-    protected $plural;
+    protected $config;
 
     /**
-     * @param ObjectType $singular
-     * @param ObjectType $plural
+     * @param ObjectType $type
+     * @param array $config
      */
-    public function __construct(ObjectType $type = null)
+    public function __construct(ObjectType $type, array $config)
     {
         $this->type = $type;
+        $this->config = $config;
     }
 
     /**
@@ -35,18 +36,22 @@ class DatabaseObjectType
     {
         $list = [];
 
-        $list[$this->type->name] = [
-            'type' => $this->type,
-            'args' => $this->singularArguments(),
-            'resolve' => function () {
-                return ['id' => 30];
-            }
-        ];
+        if (isset($this->config['singular'])) {
+            $list[$this->config['singular']] = [
+                'type' => $this->type,
+                'args' => $this->singularArguments(),
+                'resolve' => function () {
+                    return ['id' => 30];
+                }
+            ];
+        }
 
-        $list[$this->type->name . 's'] = [
-            'type' => Type::listOf($this->type),
-            'args' => $this->pluralArguments()
-        ];
+        if (isset($this->config['plural'])) {
+            $list[$this->config['plural']] = [
+                'type' => Type::listOf($this->type),
+                'args' => $this->pluralArguments()
+            ];
+        }
 
         return $list;
     }
@@ -58,7 +63,7 @@ class DatabaseObjectType
      */
     public function singularArguments(): array
     {
-        return [];
+        return $this->type->config['args'];
     }
 
     /**

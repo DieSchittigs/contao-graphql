@@ -17,18 +17,14 @@ class Resolver
     protected $table;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $singularName;
+    protected $configuration;
 
-    /**
-     * @var string
-     */
-    protected $pluralName;
-
-    public function __construct(string $table)
+    public function __construct(string $table, array $config)
     {
         $this->table = $table;
+        $this->config = $config;
     }
 
     /**
@@ -36,34 +32,24 @@ class Resolver
      * 
      * @return DatabaseObjectType
      */
-    public function resolve(): DatabaseObjectType
+    public function generateType(): DatabaseObjectType
     {
-        $config = $this->generateConfig($this->table);
+        $config = $this->generateTypeConfig($this->table);
         $singular = new ObjectType($config);
 
-        return new DatabaseObjectType($singular);
-    }
-
-    public function setSingularName(string $name): Resolver
-    {
-        $this->singularName = $name;
-        return $this;
-    }
-
-    public function setPluralName(string $name): Resolver
-    {
-        $this->pluralName = $name;
-        return $this;
+        return new DatabaseObjectType($singular, $this->config);
     }
 
     /**
-     * Generates an object type configuration for the specified table
+     * Generates an object type configuration for this object's table
      * 
      * @param string $table The table name of the object to generate a configuration for
      * @return array
      */
-    protected function generateConfig(string $table): array
+    protected function generateTypeConfig(): array
     {
+        $table = $this->table;
+
         System::loadLanguageFile($table, 'de');
         Controller::loadDataContainer($table);
         $dcaFields = $GLOBALS['TL_DCA'][$table]['fields'];
@@ -87,7 +73,7 @@ class Resolver
         // Currently singularName is required for testing purposes.
         // Hardcoding will be removed later.
         $data = [
-            'name' => $this->singularName,
+            'name' => $this->config['type'],
             'fields' => $fields
         ];
 

@@ -16,8 +16,12 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->useAttributeAsKey('name')
             ->arrayPrototype()
-                ->ignoreExtraKeys()
+                ->beforeNormalization()
+                    ->ifString()
+                    ->then(function ($v) { return ['singular' => $v]; })
+                ->end()
                 ->children()
+                    ->scalarNode('type')->end()
                     ->scalarNode('singular')->end()
                     ->scalarNode('plural')->end()
                     ->scalarNode('resolver')

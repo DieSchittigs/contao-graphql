@@ -44,19 +44,7 @@ class ObjectTypeGenerator
      */
     protected function configuration(string $type): array
     {
-        // The singular and plural name are only relevant for the DatabaseObjectType.
-        // Really we don't care at the ObjectTypeGenerator level.
-
-        $config = $this->container->getParameter('contao.graphql.config')[$type];
-        
-        $singular = $config['singular'] ?? ucfirst(str_replace('tl_', '', $type));
-        $plural = $config['plural'] ?? null;
-
-        return [
-            'singular' => $singular,
-            'plural' => $plural,
-            'resolver' => $config['resolver'],
-        ];
+        return $this->container->getParameter('contao.graphql.config')[$type];
     }
 
     /**
@@ -77,9 +65,7 @@ class ObjectTypeGenerator
 
         $configuration = $this->configuration($type);
 
-        $resolver = new $configuration['resolver']($type);
-        $resolver->setSingularName($configuration['singular']);
-
-        return $this->resolved[$type] = $resolver->resolve();
+        $resolver = new $configuration['resolver']($type, $configuration);
+        return $this->resolved[$type] = $resolver->generateType();
     }
 }

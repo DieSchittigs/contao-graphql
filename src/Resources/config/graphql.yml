@@ -1,4 +1,5 @@
 tl_content:
+  type: Element
   singular: ContentElement
   plural: ContentElements
   resolver: DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\ContentElement

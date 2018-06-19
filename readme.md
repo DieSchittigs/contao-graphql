@@ -8,8 +8,19 @@ You can add your own GraphQL types or override the configuration of existing one
 
 ```yaml
 graphql:
+  # Full options
+  tl_child:
+    type: Child
+    singular: Child
+    plural: Children
+    resolver: MyVendor\Namespace\ChildResolver
+  
+  # When using shorthand notation, the value will be used for type and singular
+  # There will be no pluralized version of this table
+  tl_child: Child
+  
+  # If type is omitted, singular has to be specified and will be used instead
   tl_child:
     singular: Child
     plural: Children
-    resolver: MyVendor\Namespace\ChildResolver  # Needs to extend DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\Resolver
 ```
