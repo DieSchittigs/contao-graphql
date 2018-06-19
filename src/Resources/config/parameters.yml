@@ -1,8 +1,0 @@
-parameters:
-  contao_graphql.types: 
-    - tl_content
-    - tl_user
-    - tl_article
-  contao_graphql.type.tl_content.singular: ContentElement
-  contao_graphql.type.tl_content.plural: ContentElements
-  contao_graphql.type.tl_content.resolver: DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\ContentElement

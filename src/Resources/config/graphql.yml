@@ -1,0 +1,10 @@
+tl_content:
+  singular: ContentElement
+  plural: ContentElements
+  resolver: DieSchittigs\ContaoGraphQLBundle\Type\Resolvers\ContentElement
+tl_article:
+  singular: Article
+  plural: Articles
+tl_user:
+  singular: User
+  plural: Users
